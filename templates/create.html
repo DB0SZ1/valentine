@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Valentine's Proposal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #ffe6e6, #ffb3b3);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            color: #ff4d6d;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffd6d6;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff4d6d;
+            box-shadow: 0 0 10px rgba(255, 77, 109, 0.2);
+        }
+
+        button {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #ff3358;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        #generatedLink {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .link-container {
+            margin-top: 15px;
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 10px;
+            word-break: break-all;
+        }
+
+        .phone-input {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .phone-input input {
+            padding-left: 40px;
+        }
+        
+        .phone-input::before {
+            content: "+";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .optional-label {
+            color: #888;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .copy-btn {
+            margin-top: 15px;
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .success-message {
+            color: #28a745;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: floatHeart 6s ease-in infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hearts-bg" id="heartsBg"></div>
+    <div class="container">
+        <h1>Create Your Valentine's Proposal 💝</h1>
+        <form id="proposalForm">
+            <div class="form-group">
+                <label>Your Name:</label>
+                <input type="text" name="sender_name" required>
+            </div>
+            <div class="form-group">
+                <label>Your Valentine's Name:</label>
+                <input type="text" name="receiver_name" required>
+            </div>
+            <div class="form-group">
+                <label>Your Phone Number: <span class="optional-label">(optional)</span></label>
+                <div class="phone-input">
+                    <input type="tel" name="phone_number" pattern="[0-9]*" placeholder="Enter your WhatsApp number">
+                </div>
+            </div>
+            <button type="submit">Create Magic ✨</button>
+        </form>
+    
+        <div id="generatedLink">
+            <h3 style="color: #ff4d6d; margin-bottom: 15px;">Your Valentine's Link is Ready! 💌</h3>
+            <p>Share this special link with your Valentine:</p>
+            <div class="link-container" id="linkText"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">
+                Copy Link 📋
+            </button>
+            <p class="success-message" id="copySuccess">Link copied successfully! ✨</p>
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts background
+        function createHearts() {
+            const hearts = ['❤️', '💖', '💕', '💗', '💓'];
+            const heartsContainer = document.getElementById('heartsBg');
+
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.className = 'heart';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.animationDelay = `${Math.random() * 5}s`;
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        createHearts();
+
+        // Form submission
+        document.getElementById('proposalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/create', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                const fullLink = window.location.origin + data.link;
+
+                // Show generated link section
+                document.getElementById('generatedLink').style.display = 'block';
+                document.getElementById('linkText').textContent = fullLink;
+
+                // Scroll to show the generated link
+                document.getElementById('generatedLink').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error creating your proposal. Please try again.');
+            }
+        });
+
+        // Copy to clipboard function
+        function copyToClipboard() {
+            const linkText = document.getElementById('linkText').textContent;
+            navigator.clipboard.writeText(linkText).then(() => {
+                const copySuccess = document.getElementById('copySuccess');
+                const copyBtn = document.querySelector('.copy-btn');
+
+                copySuccess.style.display = 'block';
+                copyBtn.textContent = 'Copied! ✅';
+
+                setTimeout(() => {
+                    copySuccess.style.display = 'none';
+                    copyBtn.textContent = 'Copy Link 📋';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+                alert('Failed to copy link. Please try selecting and copying manually.');
+            });
+        }
+    </script>
+</body>
+
+</html>
