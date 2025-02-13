@@ -2,18 +2,19 @@ from flask import Flask, render_template, request, jsonify, redirect
 import uuid
 from datetime import datetime
 import random
-import re
 import string
 
 app = Flask(__name__)
 
-# Store proposals and short URLs in memory (in production, use a database)
+# Store proposals and short URLs in memory (use a database in production)
 proposals = {}
 url_mappings = {}
 
-# Configuration
-BASE_URL = "https://your-domain.com"  # Replace with your actual domain
 SHORT_URL_LENGTH = 6
+
+def get_base_url():
+    """Returns the base URL without trailing slash"""
+    return request.host_url.rstrip('/')
 
 def generate_short_code():
     """Generate a random short code for URLs"""
@@ -24,7 +25,7 @@ def generate_short_code():
             return code
 
 def generate_love_message(receiver_name):
-    # [Previous message generation code remains the same]
+    """Generates a personalized love message"""
     intros = [
         f"My dearest {receiver_name},",
         f"Dear {receiver_name},",
@@ -34,7 +35,7 @@ def generate_love_message(receiver_name):
         f"To the one who holds my heart, {receiver_name},",
         f"My love, {receiver_name},"
     ]
-    
+
     middles = [
         "From the moment I first saw you, you've captured my heart in ways I never thought possible. Your smile lights up my world, and your laugh is the sweetest melody I've ever heard.",
         "Every moment spent with you feels like a beautiful dream I never want to wake up from. You make my heart skip a beat with just a simple glance.",
@@ -44,7 +45,7 @@ def generate_love_message(receiver_name):
         "The way your eyes sparkle when you laugh and the warmth of your embrace make me fall in love with you over and over again.",
         "There's a magic in the way you make me feel—like I'm the luckiest person in the world just because I get to love you."
     ]
-    
+
     feelings = [
         "The way you understand me, support me, and care for me makes every day feel like Valentine's Day. Your presence in my life is the greatest gift I could ever ask for.",
         "My heart beats a little faster whenever I think of you. You've become such an important part of my life that I can't imagine a single day without you.",
@@ -54,7 +55,7 @@ def generate_love_message(receiver_name):
         "Your kindness, your strength, your laughter—they make my world infinitely better. I cherish every single thing about you.",
         "I love the way you make my heart feel safe and my soul feel alive. You are my greatest love, my best friend, and my forever."
     ]
-    
+
     endings = [
         "Will you be my Valentine and let me show you just how special you are to me?",
         "Would you make me the happiest person by being my Valentine?",
@@ -64,7 +65,7 @@ def generate_love_message(receiver_name):
         "Every love story is special, but ours is my favorite. Would you do me the honor of being my Valentine?",
         "With all my heart, with all my soul, I choose you—today, tomorrow, and always. Will you be mine?"
     ]
-    
+
     message = f"{random.choice(intros)}\n\n{random.choice(middles)}\n\n{random.choice(feelings)}\n\n{random.choice(endings)}"
     return message
 
@@ -79,7 +80,7 @@ def create():
         receiver_name = request.form['receiver_name']
         phone_number = request.form.get('phone_number', '').strip()
         
-        # Generate the message
+        # Generate the love message
         message = generate_love_message(receiver_name)
         
         # Generate proposal ID and short URL
@@ -98,14 +99,14 @@ def create():
         # Store URL mapping
         url_mappings[short_code] = proposal_id
         
-        # Return short URL
-        short_url = f"{BASE_URL}/{short_code}"
-        return jsonify({'link': short_url})
+        # Return only the short code - the frontend can construct the full URL if needed
+        return jsonify({'link': f"/{short_code}"})
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
 @app.route('/<short_code>')
 def redirect_to_proposal(short_code):
+    """Redirects short code to the proposal page"""
     proposal_id = url_mappings.get(short_code)
     if not proposal_id:
         return "Proposal not found", 404
@@ -115,10 +116,10 @@ def redirect_to_proposal(short_code):
         return "Proposal not found", 404
     
     return render_template('proposal.html', 
-                         receiver_name=proposal['receiver_name'],
-                         sender_name=proposal['sender_name'],
-                         message=proposal['message'],
-                         phone_number=proposal['phone_number'])
+                           receiver_name=proposal['receiver_name'],
+                           sender_name=proposal['sender_name'],
+                           message=proposal['message'],
+                           phone_number=proposal['phone_number'])
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
